@@ -6,6 +6,7 @@ import { type Note } from '@/types/note';
 
 interface NoteListProps {
   notes: Note[];
+  filter?: string[]; 
 }
 
 export const NoteList = ({ notes }: NoteListProps) => {
