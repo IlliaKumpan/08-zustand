@@ -18,19 +18,11 @@ export const metadata: Metadata = {
 };
 
 export default function CreateNote() {
-  const handleCreateAction = async (formData: FormData) => {
-    'use server';
-    const title = formData.get('title');
-    const content = formData.get('content');
-    const tag = formData.get('tag');
-    console.log('Saving note:', { title, content, tag });
-  };
-
   return (
     <main className={css.main}>
       <div className={css.container}>
         <h1 className={css.title}>Create note</h1>
-        <NoteForm action={handleCreateAction} />
+        <NoteForm /> 
       </div>
     </main>
   );
