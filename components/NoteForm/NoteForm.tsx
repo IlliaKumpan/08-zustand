@@ -3,27 +3,24 @@ import { useNoteStore } from '@/lib/store/noteStore';
 import { useRouter } from 'next/navigation';
 import css from './NoteForm.module.css';
 
-export default function NoteForm({ action }: { action: (formData: FormData) => void }) {
-  const { draft, setDraft, clearDraft } = useNoteStore();
+interface NoteFormProps {
+  action: (formData: FormData) => void;
+}
+
+export default function NoteForm({ action }: NoteFormProps) {
+  const { draft, setDraft } = useNoteStore();
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setDraft({ [name]: value });
+    setDraft({ ...draft, [name]: value });
   };
 
   const handleCancel = () => {
     router.back();
   };
-
-  const handleSubmit = async (formData: FormData) => {
-    await action(formData);
-    clearDraft();
-    router.back();
-  };
-
   return (
-    <form action={handleSubmit} className={css.form}>
+    <form action={action} className={css.form}>
       <input
         name="title"
         className={css.input}
@@ -49,6 +46,8 @@ export default function NoteForm({ action }: { action: (formData: FormData) => v
         <option value="Todo">Todo</option>
         <option value="Work">Work</option>
         <option value="Personal">Personal</option>
+        <option value="Meeting">Meeting</option>
+        <option value="Shopping">Shopping</option>
       </select>
       <div className={css.actions}>
         <button type="button" onClick={handleCancel} className={css.cancelBtn}>

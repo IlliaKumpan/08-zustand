@@ -16,6 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "NoteHub - Your Personal Knowledge Base",
     description: "Organize your thoughts, tasks, and ideas with NoteHub.",
+    url: "https://notehub-phi.vercel.app/", // Додано обов'язкову властивість url
     images: [
       {
         url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
@@ -35,7 +36,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={roboto.className}>
-        
         <TanStackProvider>
           {children}
         </TanStackProvider>

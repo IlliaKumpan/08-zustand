@@ -1,32 +1,25 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface NoteDraft {
-  title: string;
-  content: string;
-  tag: string;
-}
-
-interface NoteState {
-  draft: NoteDraft;
-  setDraft: (note: Partial<NoteDraft>) => void;
-  clearDraft: () => void;
-}
-
-const initialDraft: NoteDraft = {
+const initialDraft = {
   title: '',
   content: '',
   tag: 'Todo',
 };
 
-export const useNoteStore = create<NoteState>()(
+interface NoteStore {
+  draft: typeof initialDraft;
+  setDraft: (updatedNote: typeof initialDraft) => void;
+  clearDraft: () => void;
+}
+
+export const useNoteStore = create<NoteStore>()(
   persist(
     (set) => ({
       draft: initialDraft,
-      setDraft: (updatedFields) =>
-        set((state) => ({
-          draft: { ...state.draft, ...updatedFields },
-        })),
+      setDraft: (updatedNote) => set((state) => ({ 
+        draft: { ...state.draft, ...updatedNote } 
+      })),
       clearDraft: () => set({ draft: initialDraft }),
     }),
     {
