@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
+import { Header } from ".././components/Header/Header";
+import { Footer } from ".././components/Footer/Footer";
 import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
 
 const roboto = Roboto({
@@ -16,7 +18,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "NoteHub - Your Personal Knowledge Base",
     description: "Organize your thoughts, tasks, and ideas with NoteHub.",
-    url: "https://notehub-phi.vercel.app/", // Додано обов'язкову властивість url
+    url: "https://notehub-phi.vercel.app/",
     images: [
       {
         url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
@@ -29,15 +31,22 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  children,
+    children,
+    modal,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
+    modal: React.ReactNode;
 }>) {
   return (
     <html lang="en">
-      <body className={roboto.className}>
+      <body>
         <TanStackProvider>
-          {children}
+          <div className="app-wrapper">
+            <Header />
+            <main>{children}</main>
+            {modal}
+            <Footer />
+          </div>
         </TanStackProvider>
       </body>
     </html>

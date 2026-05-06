@@ -1,26 +1,53 @@
 'use client';
 import { useNoteStore } from '@/lib/store/noteStore';
 import { useRouter } from 'next/navigation';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import css from './NoteForm.module.css';
 
-interface NoteFormProps {
-  action: (formData: FormData) => void;
+// Типізація даних нотатки замість any
+interface NoteData {
+  title: string;
+  content: string;
+  tag: string;
 }
 
-export default function NoteForm({ action }: NoteFormProps) {
-  const { draft, setDraft } = useNoteStore();
+// Функція запиту
+const createNoteRequest = async (newNote: NoteData): Promise<NoteData> => {
+  const response = await fetch('/api/notes', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(newNote),
+  });
+  if (!response.ok) throw new Error('Failed to create note');
+  return response.json();
+};
+
+export default function NoteForm() {
+  const { draft, setDraft, clearDraft } = useNoteStore();
   const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: createNoteRequest,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
+      clearDraft(); 
+      router.push('/notes'); 
+    },
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setDraft({ ...draft, [name]: value });
+    setDraft({ ...draft, [name]: value }); 
   };
 
-  const handleCancel = () => {
-    router.back();
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    mutation.mutate(draft);
   };
+
   return (
-    <form action={action} className={css.form}>
+    <form onSubmit={handleSubmit} className={css.form}>
       <input
         name="title"
         className={css.input}
@@ -50,11 +77,11 @@ export default function NoteForm({ action }: NoteFormProps) {
         <option value="Shopping">Shopping</option>
       </select>
       <div className={css.actions}>
-        <button type="button" onClick={handleCancel} className={css.cancelBtn}>
+        <button type="button" onClick={() => router.back()} className={css.cancelBtn}>
           Cancel
         </button>
-        <button type="submit" className={css.submitBtn}>
-          Save
+        <button type="submit" disabled={mutation.isPending} className={css.submitBtn}>
+          {mutation.isPending ? 'Saving...' : 'Save'}
         </button>
       </div>
     </form>
