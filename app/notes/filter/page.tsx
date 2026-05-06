@@ -1,5 +1,5 @@
-import FilteredNotesPage from './[...slug]/page';
+import NotesClient from '@/components/NotesClient/NotesClient';
 
-export default async function DefaultFilterPage() {
-  return <FilteredNotesPage params={Promise.resolve({ slug: ['all'] })} />;
+export default function DefaultFilterPage() {
+  return <NotesClient filter={['all']} />;
 }
